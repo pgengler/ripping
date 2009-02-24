@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+
+#######
+## PARAMETERS
+#######
+my $min = 20;
+my $max = 120;
+
+#######
+## MAIN CODE
+#######
+if (scalar(@ARGV) != 1) {
+	print "Usage: rip-tv <basename>\n";
+	exit;
+}
+
+my $basename = $ARGV[0];
+
+my @output = `lsdvd`;
+
+my $count = 0;
+
+foreach my $line (@output) {
+	chomp $line;
+	if ($line =~ /^Title\: (.+?)\, Length: (.+?)\s/) {
+		my $title  = int($1);
+		my $length = $2;
+
+		my ($hours, $minutes, $seconds) = split(/\:/, $length);
+
+		$hours = int($hours);
+		$minutes = int($minutes);
+
+		if ($hours > 0) {
+			$minutes += (60 * $hours);
+		}
+
+		if ($minutes >= $min && $minutes < $max) {
+			$count++;
+			system("HandBrakeCLI -t $title -f mkv --deinterlace=\"slower\" -p  -e x264 -b 1500 -2  -T  -a 1 -E vorbis -B 160 -R 0 -6 dpl2 -D 1 -m -x ref=2:bframes=2:me=umh -i /dev/dvd -o \"$basename-$count.mkv\"");
+		}
+
+	}
+}

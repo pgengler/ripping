@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ -z "$1" ]
+then
+	echo "Must provide a filename!"
+	exit
+fi
+
+#HandBrakeCLI -L -f mkv -o "$1" -e x264 -b 1500 -2 -T -E vorbis -d slower -i /dev/dvd
+HandBrakeCLI -L -f mkv --deinterlace="slower" -p  -e x264 -b 1500 -2  -T  -a 1 -E vorbis -B 160 -R 0 -6 dpl2 -D 1 -m -x ref=2:bframes=2:me=umh -i /dev/dvd -o "$1"
