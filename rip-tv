@@ -1,7 +1,17 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 #######
-## PARAMETERS
+## PERL SETUP
+#######
+use strict;
+
+#######
+## INCLUDES
+#######
+use Getopt::Long;
+
+#######
+## DEFAULT VALUES
 #######
 my $min = 20;
 my $max = 120;
@@ -9,8 +19,18 @@ my $max = 120;
 #######
 ## MAIN CODE
 #######
+Getopt::Long::GetOptions(
+	'min=i' => \$min,
+	'max=i' => \$max
+);
+
+if ($min > $max) {
+	print "Minimum time (default 20) cannot be greater than maximum time (default 120)\n";
+	exit;
+}
+
 if (scalar(@ARGV) != 1) {
-	print "Usage: rip-tv <basename>\n";
+	print "Usage: rip-tv [--min=x] [--max=x] <basename>\n";
 	exit;
 }
 
