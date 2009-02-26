@@ -37,7 +37,7 @@ foreach my $line (@output) {
 
 		if ($minutes >= $min && $minutes < $max) {
 			$count++;
-			system("HandBrakeCLI -t $title -f mkv --deinterlace=\"slower\" -p  -e x264 -b 1500 -2  -T  -a 1 -E vorbis -B 160 -R 0 -6 dpl2 -D 1 -m -x ref=2:bframes=2:me=umh -i /dev/dvd -o \"$basename-$count.mkv\"");
+			system("HandBrakeCLI -t $title -f mkv --deinterlace=\"slower\" -p  -e x264 -b 1500 -2  -T  -a 1 -E vorbis -B 160 -R 0 -6 dpl2 -D 1 -m -x ref=2:bframes=2:me=umh -i /dev/dvd -o \"$basename-$count.mkv\" 2>/dev/null");
 		}
 
 	}
