@@ -9,20 +9,29 @@ use strict;
 ## INCLUDES
 #######
 use Getopt::Long;
+use Pod::Usage;
 
 #######
 ## DEFAULT VALUES
 #######
-my $min = 20;
-my $max = 120;
+my $min= 20;
+my $max= 120;
+my $titles = '';
+my $only;
+my $usage;
 
 #######
 ## MAIN CODE
 #######
 Getopt::Long::GetOptions(
-	'min=i' => \$min,
-	'max=i' => \$max
+	'min=i'=> \$min,
+	'max=i'=> \$max,
+	'titles=s' => \$titles,
+	'only' => \$only,
+	'usage'=> \$usage
 );
+
+pod2usage(-exitstatus => 0, -verbose => 2) if $usage;
 
 if ($min > $max) {
 	print "Minimum time (default 20) cannot be greater than maximum time (default 120)\n";
@@ -39,6 +48,30 @@ my $basename = $ARGV[0];
 print "Reading DVD title info...\n";
 my @output = `lsdvd`;
 print "Finished reading DVD title info.\n";
+
+# Parse the 'titles' option, if we had one
+my %force;
+
+my @pieces = split(/,/, $titles);
+
+foreach my $piece (@pieces) {
+	if ($piece =~ /^\d+$/) {
+		$force{ $piece } = 1;
+	} elsif ($piece =~ /^(\d)+-(\d)+$/) {
+		my $start = $1;
+		my $fin   = $2;
+		if ($start > $fin) {
+			print "ERROR: Start title cannot be greater than end title\n";
+			exit;
+		}
+		for (my $i = $start; $i <= $fin; $i++) {
+			$force{ $i } = 1;
+		}
+	}
+}
+
+
+# Figure out which titles to rip
 
 my @titles;
 
@@ -57,13 +90,18 @@ foreach my $line (@output) {
 			$minutes += (60 * $hours);
 		}
 
-		if ($minutes >= $min && $minutes < $max) {
+		if (defined($force{ $title })) {
+			push @titles, $title;
+			print "Title $title is $minutes minutes long.\n";
+		} elsif (!$only && ($minutes >= $min && $minutes < $max)) {
 			push @titles, $title;
 			print "Title $title is $minutes minutes long.\n";
 		} elsif ($minutes < $min) {
 			print "Skipping title $title because it's too short.\n";
-		} else {
+		} elsif ($minutes > $max) {
 			print "Skipping title $title because it's too long.\n";
+		} else {
+			print "Skipping title $title\n";
 		}
 
 	}
@@ -81,3 +119,72 @@ foreach my $title (@titles) {
 	system("HandBrakeCLI -t $title -f mkv --deinterlace=\"slower\" -p  -e x264 -b 1500 -2  -T  -a 1 -E vorbis -B 160 -R 0 -6 dpl2 -D 1 -m -x ref=2:bframes=2:me=umh -i /dev/dvd -o \"$basename-$count.mkv\" 2>/dev/null");
 	$count++;
 }
+
+__END__
+
+=head1 NAME
+
+rip-rv -- Rip TV episodes from a DVD using HandBrake
+
+=head1 SYNOPSIS
+
+rip-tv [options] [basename]
+
+ Options:
+   --usage show usage instructions
+   --min=x minimum time, in minutes, for a title
+   --max=x maximum time, in minutes, for a title
+   --titles=x  list of titles to rip
+   --only  only rip titles specified with --titles
+  basename Base part of filename for rips
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--usage>
+
+Show these usage instructions.
+
+=item B<--min=x>
+
+Sets the minimum length of time, in minutes, for a title to be
+considered for ripping. Titles shorter than this time are skipped,
+unless given as part of the --titles option.
+Default value is 20 minutes.
+
+=item B<--max=x>
+
+Sets the maximum length of time, in minutes, for a title to be
+considered for ripping. Titles longer than this time are skipped,
+unless given as part of the --titles option.
+Default value is 120 minutes.
+
+=item B<--titles=x>
+
+List titles that should be ripped regardless of time constraints. This
+is a comma separated list of titles (such as 1,2,3) and/or ranges of
+titles (such as 2-4,5-6). These can be combined (such as 1,3-4).
+
+=item B<--only>
+
+When this option is specified, only titles given as part of the --titles
+option are ripped. By default, those titles as well as those within the
+min/max times are ripped.
+
+=item B<basename>
+
+This is the base part of the filename for the rips. To this is appended
+a dash (-) and a number representing the sequence in which it was ripped.
+The first title ripped is basename-1.mkv, second is basename-2.mkv, etc.
+
+=back
+
+=head1 DESCRIPTION
+
+B<This program> uses HandBrake to rip TV series episodes from a DVD.
+Since not all titles on the DVD are episodes, options are provided
+to ensure only the episodes and not the menus, extra features, etc.
+are ripped.
+
+=cut
