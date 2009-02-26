@@ -16,9 +16,11 @@ if (scalar(@ARGV) != 1) {
 
 my $basename = $ARGV[0];
 
+print "Reading DVD title info...\n";
 my @output = `lsdvd`;
+print "Finished reading DVD title info.\n";
 
-my $count = 0;
+my @titles;
 
 foreach my $line (@output) {
 	chomp $line;
@@ -36,9 +38,26 @@ foreach my $line (@output) {
 		}
 
 		if ($minutes >= $min && $minutes < $max) {
-			$count++;
-			system("HandBrakeCLI -t $title -f mkv --deinterlace=\"slower\" -p  -e x264 -b 1500 -2  -T  -a 1 -E vorbis -B 160 -R 0 -6 dpl2 -D 1 -m -x ref=2:bframes=2:me=umh -i /dev/dvd -o \"$basename-$count.mkv\" 2>/dev/null");
+			push @titles, $title;
+			print "Title $title is $minutes minutes long.\n";
+		} elsif ($minutes < $min) {
+			print "Skipping title $title because it's too short.\n";
+		} else {
+			print "Skipping title $title because it's too long.\n";
 		}
 
 	}
+}
+
+my $count = 1;
+
+if (scalar(@titles) == 0) {
+	print "No suitable titles found!\n";
+	exit;
+}
+
+foreach my $title (@titles) {
+	print "Ripping title $title to file '$basename-$count.mkv'\n";
+	system("HandBrakeCLI -t $title -f mkv --deinterlace=\"slower\" -p  -e x264 -b 1500 -2  -T  -a 1 -E vorbis -B 160 -R 0 -6 dpl2 -D 1 -m -x ref=2:bframes=2:me=umh -i /dev/dvd -o \"$basename-$count.mkv\" 2>/dev/null");
+	$count++;
 }
