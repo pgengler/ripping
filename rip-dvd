@@ -6,4 +6,4 @@ then
 	exit
 fi
 
-HandBrakeCLI -L -f mkv --decomb -p  -e x264 -2  -T  -a 1 -E ac3 -m -x ref=2:bframes=2:me=umh -i /dev/dvd -o "$1" $2 $3
+HandBrakeCLI -L -f mkv --decomb -e x264 -a 1 -E ac3 -m -i /dev/dvd -o "$1" $2 $3

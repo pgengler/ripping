@@ -116,8 +116,7 @@ if (scalar(@titles) == 0) {
 
 foreach my $title (@titles) {
 	print "\nRipping title $title to file '$basename-$count.mkv'\n";
-#	system("HandBrakeCLI -t $title -f mkv --deinterlace=\"slower\" -p  -e x264 -b 2000 -2  -T  -a 1 -E ac3 -B 192 -R 0 -D 1 -m -x ref=2:bframes=2:me=umh -i /dev/dvd -o \"$basename-$count.mkv\" 2>/dev/null");
-	system("HandBrakeCLI -t $title -f mkv  --decomb -p  -e x264 -2  -T  -a 1 -E ac3 -m -x ref=2:bframes=2:me=umh -i /dev/dvd -o \"$basename-$count.mkv\" 2>/dev/null");
+	system("HandBrakeCLI -t $title -f mkv --decomb -e x264 -a 1 -E ac3 -m -i /dev/dvd -o \"$basename-$count.mkv\" 2>/dev/null");
 	$count++;
 }
 
