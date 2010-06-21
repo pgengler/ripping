@@ -57,11 +57,11 @@ my @pieces = split(/,/, $titles);
 foreach my $piece (@pieces) {
 	if ($piece =~ /^\d+$/) {
 		$force{ $piece } = 1;
-	} elsif ($piece =~ /^(\d)+-(\d)+$/) {
-		my $start = $1;
-		my $fin   = $2;
+	} elsif ($piece =~ /^(\d+)-(\d+)$/) {
+		my $start = int($1);
+		my $fin   = int($2);
 		if ($start > $fin) {
-			print "ERROR: Start title cannot be greater than end title\n";
+			print "ERROR: Start title ($start) cannot be greater than end title ($fin)\n";
 			exit;
 		}
 		for (my $i = $start; $i <= $fin; $i++) {
