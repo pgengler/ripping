@@ -2,8 +2,10 @@
 
 if [ -z "$1" ]
 then
-	echo "Must provide a filename!"
+	echo "Must provide a filename!" >&2
 	exit
 fi
 
-HandBrakeCLI -L -f mkv --decomb -e x264 -a 1 -E ac3 -m -i /dev/dvd -o "$1" $2 $3
+TRACK=$(lsdvd 2>/dev/null | grep "Longest track: " | sed -e 's/Longest track: //')
+
+HandBrakeCLI -t $TRACK -f mkv --decomb -e x264 -a 1 -E ac3 -m -i /dev/dvd -o "$1" $2 $3
