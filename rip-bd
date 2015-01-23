@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [[ $# != 2 ]]; then
+	echo "USAGE: $0 <path> <filename>" >&2
+	exit 1
+fi
+
+HandBrakeCLI -i "$1" -o "$2" --main-feature --large-file -q 25 -E copy -e x264 -m
