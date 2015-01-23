@@ -15,16 +15,16 @@ Usage: `rip-bd <makemkv file> <output filename>`
 ### rip-dvd
 This script is used to rip the main feature from a DVD.
 
-Usage: `rip-dvd <filename>.mkv`
+Usage: `rip-dvd <filename>.mp4`
 
-This rips the main feature from the disc in the drive referenced by /dev/dvd to a file called `filename.mkv`.
+This rips the main feature from the disc in the drive referenced by /dev/dvd to a file called `filename.mp4`.
 
 ### rip-tv
 This script rips TV episodes from a DVD disc.
 
 Usage: `rip-tv <basename>`
 
-This rips all titles with a length between 20 and 120 minutes from the disc in /dev/dvd. Output files are named `basename-#.mkv`, where # is the number in the sequence (1 for the first, 2 for the second, etc.). This is usually, but not always, the same order as the episodes on the disc.
+This rips all titles with a length between 20 and 120 minutes from the disc in /dev/dvd. Output files are named `basename-#.mp4`, where # is the number in the sequence (1 for the first, 2 for the second, etc.). This is usually, but not always, the same order as the episodes on the disc.
 Run `rip-tv --usage` for more information about other available options.
 
 ### rip-tv-ep

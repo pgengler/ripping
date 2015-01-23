@@ -8,4 +8,4 @@ fi
 
 TRACK=$(lsdvd 2>/dev/null | grep "Longest track: " | sed -e 's/Longest track: //')
 
-HandBrakeCLI -t $TRACK -f mkv --decomb -e x264 -a 1 -E ac3 -m -i /dev/dvd -o "$1" $2 $3
+HandBrakeCLI -t $TRACK -f mp4 --decomb -e x264 -a 1 -E ac3 -m -i /dev/dvd -o "$1" $2 $3

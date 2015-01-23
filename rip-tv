@@ -115,8 +115,8 @@ if (scalar(@titles) == 0) {
 }
 
 foreach my $title (@titles) {
-	print "\nRipping title $title to file '$basename-$count.mkv'\n";
-	system("HandBrakeCLI -t $title -f mkv --decomb -e x264 -a 1 -E ac3 -m -i /dev/dvd -o \"$basename-$count.mkv\" 2>/dev/null");
+	print "\nRipping title $title to file '$basename-$count.mp4'\n";
+	system("HandBrakeCLI -t $title -f mp4 --decomb -e x264 -a 1 -E ac3 -m -i /dev/dvd -o \"$basename-$count.mp4\" 2>/dev/null");
 	$count++;
 }
 
@@ -178,7 +178,7 @@ min/max times are ripped.
 
 This is the base part of the filename for the rips. To this is appended
 a dash (-) and a number representing the sequence in which it was ripped.
-The first title ripped is basename-1.mkv, second is basename-2.mkv, etc.
+The first title ripped is basename-1.mp4, second is basename-2.mp4, etc.
 
 =back
 
